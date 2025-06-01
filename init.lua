@@ -157,7 +157,12 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
-
+vim.api.nvim_create_autocmd('InsertLeave', {
+  group = vim.api.nvim_create_augroup('kickstart-auto-save', { clear = true }),
+  pattern = '*', -- Apply to all file types
+  command = 'update', -- 'update' writes only if changes were made
+  desc = 'Auto save when leaving Insert mode',
+})
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
 --  See `:help vim.hl.on_yank()`
