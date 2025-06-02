@@ -239,6 +239,36 @@ require('lazy').setup({
     },
   },
 
+  -- flash.vim plugin
+  {
+    'folke/flash.nvim',
+    event = 'VeryLazy',
+    ---@type Flash.Config
+    opts = {},
+    -- Optional: add recommended keymaps directly in the plugin spec
+    -- or set them up separately in your keymaps section.
+    -- Flash will also set up some default mappings if you don't specify them here.
+    keys = {
+      {
+        's',
+        mode = { 'n', 'x', 'o' },
+        function()
+          require('flash').jump()
+        end,
+        desc = 'Flash Jump',
+      },
+      {
+        'S',
+        mode = { 'n', 'x', 'o' },
+        function()
+          require('flash').treesitter()
+        end,
+        desc = 'Flash Treesitter',
+      },
+      -- You can add more keymaps from flash.nvim's documentation if desired
+    },
+  },
+
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
   -- This is often very useful to both group configuration, as well as handle
