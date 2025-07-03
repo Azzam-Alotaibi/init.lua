@@ -215,6 +215,14 @@ rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
+
+  -- neoscroll for smooth scrolling
+  {
+    'karb94/neoscroll.nvim',
+    opts = {},
+    event = 'WinScrolled',
+  },
+
   'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
   {
     'folke/noice.nvim',
