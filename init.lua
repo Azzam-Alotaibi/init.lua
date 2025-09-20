@@ -114,6 +114,9 @@ vim.o.confirm = true
 vim.keymap.set('n', '<leader>dd', '<cmd>DiffviewOpen<CR>')
 vim.keymap.set('n', '<leader>dc', '<cmd>DiffviewClose<CR>')
 
+-- disabling Replace mode
+vim.keymap.set('n', 'R', '<Nop>')
+
 -- center the screen
 vim.keymap.set('n', '<C-d>', '<C-d>zz')
 vim.keymap.set('n', '<C-u>', '<C-u>zz')
@@ -234,7 +237,13 @@ require('lazy').setup({
 
   {
     'stevearc/oil.nvim',
-    opts = {},
+    opts = {
+      default_file_explorer = true,
+      keymaps = {
+        ['R'] = 'actions.refresh',
+      },
+    },
+
     -- Optional dependencies
     dependencies = { { 'echasnovski/mini.icons', opts = {} } },
     -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
@@ -744,6 +753,7 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
+
         -- clangd = {},
         gopls = {},
         -- pyright = {},
@@ -754,7 +764,7 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {},
+        ts_ls = {},
         --
 
         lua_ls = {
@@ -841,6 +851,10 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        javascript = { 'prettier' },
+        javascriptreact = { 'prettier' },
+        typescript = { 'prettier' },
+        typescriptreact = { 'prettier' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
