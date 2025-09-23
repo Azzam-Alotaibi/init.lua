@@ -240,6 +240,7 @@ require('lazy').setup({
 
   {
     'stevearc/oil.nvim',
+
     opts = {
       default_file_explorer = true,
       keymaps = {
@@ -1032,15 +1033,29 @@ require('lazy').setup({
 
       ---@diagnostic disable-next-line: duplicate-set-field
       statusline.section_filename = function()
-        local cwd = vim.fn.getcwd(0) -- project root (usually where you opened nvim)
-        local file = vim.fn.expand '%:p' -- absolute file path
-        local rel = vim.fn.fnamemodify(file, ':.'):gsub('^' .. vim.pesc(cwd) .. '/?', '')
-        if rel == '' then
-          rel = '[No Name]'
+        local project_root = vim.fn.getcwd(0)
+        local display_path
+        local buf_name = vim.api.nvim_buf_get_name(0)
+        -- A more robust check for an oil buffer by looking at the buffer name's prefix
+        if vim.bo.filetype == 'oil' or buf_name:match '^oil://' then
+          -- 1. Remove the 'oil://' prefix to get a clean file path
+          local clean_path = buf_name:gsub('^oil://', '')
+          -- 2. Calculate the path relative to the project root using the clean path
+          display_path = vim.fn.fnamemodify(clean_path, ':.'):gsub('^' .. vim.pesc(project_root) .. '/?', '')
+          if display_path == '' then
+            display_path = vim.fn.fnamemodify(project_root, ':t')
+          end
+          return '🛢️ ' .. display_path
+        else
+          -- Original logic for other files remains the same
+          local file = vim.fn.expand '%:p'
+          display_path = vim.fn.fnamemodify(file, ':.'):gsub('^' .. vim.pesc(project_root) .. '/?', '')
+          if display_path == '' then
+            display_path = '[No Name]'
+          end
+          return display_path
         end
-        return rel
       end
-
       local default_section_mode = statusline.section_mode
 
       ---@diagnostic disable-next-line: duplicate-set-field
