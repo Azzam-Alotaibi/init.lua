@@ -153,7 +153,10 @@ vim.keymap.set('n', '<leader>n', '<cmd>NoiceDismiss<CR>', { desc = 'Dismiss noti
 -- Oil
 vim.keymap.set('n', '-', '<cmd>Oil<CR>')
 
--- TIP: Disable arrow keys in normal mode
+-- Normal + Visual modes: treat ' as the blackhole register
+vim.keymap.set({ 'n', 'x' }, "'", '"_', { remap = true })
+
+-- Disable arrow keys in normal mode
 vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
 vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
 vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
@@ -1026,6 +1029,32 @@ require('lazy').setup({
       local statusline = require 'mini.statusline'
       -- set use_icons to true if you have a Nerd Font
       statusline.setup { use_icons = vim.g.have_nerd_font }
+
+      ---@diagnostic disable-next-line: duplicate-set-field
+      statusline.section_filename = function()
+        local cwd = vim.fn.getcwd(0) -- project root (usually where you opened nvim)
+        local file = vim.fn.expand '%:p' -- absolute file path
+        local rel = vim.fn.fnamemodify(file, ':.'):gsub('^' .. vim.pesc(cwd) .. '/?', '')
+        if rel == '' then
+          rel = '[No Name]'
+        end
+        return rel
+      end
+
+      local default_section_mode = statusline.section_mode
+
+      ---@diagnostic disable-next-line: duplicate-set-field
+      statusline.section_mode = function(args)
+        local mode, mode_hl = default_section_mode(args)
+        local rec = vim.fn.reg_recording()
+        if rec ~= '' then
+          -- mode = mode .. ' (● rec @' .. rec .. ')'
+          -- mode = mode .. ' %#ErrorMsg#●%* rec @' .. rec
+          -- mode = mode .. ' %#Visual#(● rec @' .. rec .. ')%*'
+          mode = mode .. ' 🎥 rec @' .. rec
+        end
+        return mode, mode_hl
+      end
 
       require('mini.comment').setup {
         -- You can add options here if needed, e.g.:
